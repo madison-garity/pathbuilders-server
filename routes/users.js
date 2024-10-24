@@ -16,6 +16,19 @@ router.get('/users', async (req, res) => {
   }
 });
 
+router.get('/user/:id', async (req, res) => {
+  try {
+    const users = await User.findOne({
+      where: { id: req.params.id },
+      attributes: ['firstName', 'lastName', 'email', 'username']
+    });
+    res.json(users);
+  } catch (error) {
+    console.log
+    res.status(500).send(error);
+  }
+});
+
 
 // Add a new user
 router.post('/user', async (req, res) => {
