@@ -3,10 +3,12 @@ const { Chat, Message } = require('../models');
 const router = express.Router();
 
 // Route to get all chats
-router.get('/chats', async (req, res) => {
+router.get('/chats/:id', async (req, res) => { 
+  const { id } = req.params;
   try {
     // Fetch all chats from the database
     const chats = await Chat.findAll({
+      where: { userId: id },
       order: [['updatedAt', 'DESC']], // Just sort by updatedAt
     });
     res.status(200).json(chats);
@@ -116,6 +118,26 @@ router.post('/chats/:id/favorite', async (req, res) => {
     res.status(500).json({ error: 'Failed to update favorite status' });
   }
 });
+
+router.delete('/chat/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the chat and delete it from the database
+    const chat = await Chat.findOne({ where: { id: id } });
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+    
+    await chat.destroy();
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    res.status(500).json({ error: 'Failed to delete chat' });
+  }
+}
+);
 
 
 module.exports = router;

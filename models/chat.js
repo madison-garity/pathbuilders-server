@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     Chat.hasMany(models.Message, {
       foreignKey: 'chatId',
       as: 'messages',
+      onDelete: 'CASCADE'
     });
   };
 
